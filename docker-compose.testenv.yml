@@ -1,0 +1,42 @@
+version: '3.7'
+
+services:
+  db:
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - data:/data
+    environment:
+      NEO4J_AUTH: none
+#      NEO4J_AUTH_FILE: /run/secrets/neo4j_auth
+#    secrets:
+#      - neo4j_auth
+    deploy:
+      labels:
+        - "traefik.enable=false"
+        - "traefik.frontend.rule=Host:neo4j.test.idai.world"
+        #- "traefik.frontend.rule=Host:neo4j.test.idai.local"
+        - "traefik.passHostHeader=true"
+        - "traefik.port=7474"
+      restart_policy:
+        condition: any
+        delay: 0s
+    networks:
+      - backend
+      - frontend
+#
+#secrets:
+#  neo4j_auth:
+#    file: ./secrets/neo4j_auth.txt
+
+volumes:
+  data:
+
+networks:
+  backend:
+    name: backend
+    external: true
+  frontend:
+    name: frontend
+    external: true
