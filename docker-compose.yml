@@ -2,4 +2,4 @@ version: '3.7'
 
 services:
   db:
-    image: neo4j:3.5
+    image: dainst/neo4j-docker:latest

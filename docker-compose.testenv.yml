@@ -2,22 +2,18 @@ version: '3.7'
 
 services:
   db:
-#    ports:
-#      - "7474:7474"
-#      - "7687:7687"
     volumes:
       - data:/data
     environment:
-      NEO4J_AUTH: none
-#      NEO4J_AUTH_FILE: /run/secrets/neo4j_auth
+      NEO4J_AUTH_FILE: /run/secrets/neo4j_auth
       NEO4J_dbms_connector_http_listen__address: 0.0.0.0:7475
       NEO4J_dbms_connector_bolt_listen__address: 0.0.0.0:7688
       NEO4J_dbms_connector_http_advertised__address: neo4j.test.idai.world:80
       NEO4J_dbms_connector_bolt_advertised__address: bolt.test.idai.world:80
 #      NEO4J_dbms_connector_http_advertised__address: neo4j.test.idai.local:80
 #      NEO4J_dbms_connector_bolt_advertised__address: bolt.test.idai.local:80
-#    secrets:
-#      - neo4j_auth
+    secrets:
+      - neo4j_auth
     deploy:
       labels:
         - "traefik.enable=true"
@@ -34,10 +30,10 @@ services:
     networks:
       - backend
       - frontend
-#
-#secrets:
-#  neo4j_auth:
-#    file: ./secrets/neo4j_auth.txt
+
+secrets:
+  neo4j_auth:
+    file: ./secrets/neo4j_auth.txt
 
 volumes:
   data:
