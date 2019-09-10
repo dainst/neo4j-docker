@@ -56,6 +56,6 @@ volumes:
   data:
 
 networks:
-  web:
+  backend:
     name: web
     external: true
