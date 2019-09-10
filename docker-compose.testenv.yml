@@ -41,8 +41,7 @@ services:
         max_attempts: 10
         delay: 30s
     networks:
-      - backend
-      - frontend
+      - web
 
 secrets:
   auth:
@@ -57,8 +56,5 @@ volumes:
 
 networks:
   backend:
-    name: backend
-    external: true
-  frontend:
-    name: frontend
+    name: web
     external: true
