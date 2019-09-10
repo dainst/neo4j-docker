@@ -28,21 +28,21 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.httpConnector.port=7475"
-#        - "traefik.wsConnector.port=7688"
+        - "traefik.wsConnector.port=7688"
 #        - "traefik.wssConnector.port=7688"
         - "traefik.httpConnector.frontend.rule=Host:neo4j.test.idai.world"
 #        - "traefik.httpConnector.frontend.rule=Host:neo4j.test.idai.local"
-#        - "traefik.wsConnector.frontend.rule=Host:bolt.test.idai.world"
+        - "traefik.wsConnector.frontend.rule=Host:bolt.test.idai.world"
 #        - "traefik.wssConnector.frontend.rule=Host:bolt.test.idai.world"
 #        - "traefik.wssConnector.protocol=https"
         - "traefik.passHostHeader=true"
+        - "traefik.docker.network=web" 
       restart_policy:
         condition: any
         max_attempts: 10
         delay: 30s
     networks:
-      - backend
-      - frontend
+      - web
 
 secrets:
   auth:
@@ -56,9 +56,6 @@ volumes:
   data:
 
 networks:
-  backend:
-    name: backend
-    external: true
-  frontend:
-    name: frontend
+  web:
+    name: web
     external: true
