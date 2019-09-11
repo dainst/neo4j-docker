@@ -2,41 +2,36 @@ version: '3.7'
 
 services:
   db:
+    image: dainst/neo4j-docker:latest
     ports:
-#      - "7475:7475"
+      - "7475:7475"
       - "7688:7688"
     volumes:
       - data:/data
     environment:
-      NEO4J_AUTH_FILE: /run/secrets/auth
+      NEO4J_AUTH_FILE: /run/secrets/neo4j-auth
       NEO4J_dbms_connectors_default__listen__address: "0.0.0.0"
       NEO4J_dbms_connector_http_listen__address: ":7475"
       NEO4J_dbms_connector_bolt_listen__address: ":7688"
       NEO4J_dbms_connector_bolt_tls__level: "OPTIONAL"
       NEO4J_dbms_connector_http_advertised__address: neo4j.test.idai.world:80
-#      NEO4J_dbms_connector_http_advertised__address: neo4j.test.idai.local:80
       # Bolt (websocket) Protocol doesn't seem to work on Port 80 or 443 (with Chrome and Firefox), couldn't use Traefik
       NEO4J_dbms_connector_bolt_advertised__address: bolt.test.idai.world:7688
-#      NEO4J_dbms_connector_bolt_advertised__address: bolt.test.idai.local:7688
     secrets:
-      - auth
-      - source: bolt_crt
+      - neo4j-auth
+      - source: neo4j-cert
         target: /ssl/neo4j.cert
-      - source: bolt_key
+      - source: neo4j-cert-key
         target: /ssl/neo4j.key
     deploy:
       labels:
         - "traefik.enable=true"
         - "traefik.httpConnector.port=7475"
         - "traefik.wsConnector.port=7688"
-#        - "traefik.wssConnector.port=7688"
         - "traefik.httpConnector.frontend.rule=Host:neo4j.test.idai.world"
-#        - "traefik.httpConnector.frontend.rule=Host:neo4j.test.idai.local"
         - "traefik.wsConnector.frontend.rule=Host:bolt.test.idai.world"
-#        - "traefik.wssConnector.frontend.rule=Host:bolt.test.idai.world"
-#        - "traefik.wssConnector.protocol=https"
         - "traefik.passHostHeader=true"
-        - "traefik.docker.network=web" 
+        - "traefik.docker.network=web"
       restart_policy:
         condition: any
         max_attempts: 10
@@ -45,17 +40,16 @@ services:
       - web
 
 secrets:
-  auth:
-    file: ./secrets/neo4j_auth.txt
-  bolt_crt:
-    file: ./secrets/bolt.test.idai.world.crt.pem
-  bolt_key:
-    file: ./secrets/bolt.test.idai.world.key.pem
+  neo4j-auth:
+    external: true
+  neo4j-cert:
+    external: true
+  neo4j-cert-key:
+    external: true
 
 volumes:
   data:
 
 networks:
-  backend:
-    name: web
+  web:
     external: true
